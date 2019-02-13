@@ -28,9 +28,39 @@ namespace CI203_semester_2
                     Inventory = new List<Stock>()
                 };
 
+                var store2 = new Store
+                {
+                    Name = "Hastings Campus Books",
+                    Address = "Hastings",
+                    Inventory = new List<Stock>()
+                };
+
                 db.Stores.Add(store1);
                 Stock store1book1 = new Stock { Item = book1, OnHand = 4, OnOrder = 6 };
                 store1.Inventory.Add(store1book1);
+
+                db.Stores.Add(store2);
+                Stock store2book1  = new Stock { Item = book1, OnHand = 2, OnOrder = 9 };
+                store2.Inventory.Add(store2book1);
+
+                db.SaveChanges();
+
+                var query = from store in db.Stores
+                            orderby store.Name
+                            select store;
+
+                WriteLine("BookStore Inventory Report: ");
+                foreach(var store in query)
+                {
+                    WriteLine($"{store.Name} located at {store.Address}");
+                    foreach(var stock in store.Inventory) {
+                        WriteLine($"- Title: {stock.Item.Title}");
+                        WriteLine($"-- Copies in Store: {stock.OnHand}");
+                        WriteLine($"-- Copies on Order: {stock.OnOrder}");
+                    }
+                }
+                WriteLine("Press any key to continue...");
+                ReadKey();
             }
         }
     }
