@@ -11,14 +11,25 @@ namespace CI203_semester_2
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
             using(var db = new BookContext())
             {
-                Book book1 = new Book { Title = "Hamlet", Author = "Shakespeare" };
-                Book book2 = new Book { Title = "Othello", Author = "Shakespeare" };
-                db.Books.Add(book1);
+                Book book1 = new Book { Title = "Martin Chuzzlewit", Author = "Charles Dickens" };
+                Book book2 = new Book { Title = "London Fields", Author = "Martin Amis" };
+
+                var testQuery = from b in db.Books
+                                where b.Title == book1.Title && b.Author == book1.Author
+                                select b;
+                if(testQuery.Count() < 1) { db.Books.Add(book1); }
+
+                testQuery = from b in db.Books
+                                where b.Title == book2.Title && b.Author == book2.Author
+                                select b;
+                if (testQuery.Count() < 1) { db.Books.Add(book2); }
                 db.Books.Add(book2);
+
                 db.SaveChanges();
 
                 var store1 = new Store
@@ -35,12 +46,15 @@ namespace CI203_semester_2
                     Inventory = new List<Stock>()
                 };
 
+                
                 db.Stores.Add(store1);
                 Stock store1book1 = new Stock { Item = book1, OnHand = 4, OnOrder = 6 };
+                //Needs check for duplicate store
                 store1.Inventory.Add(store1book1);
-
+               
                 db.Stores.Add(store2);
                 Stock store2book1  = new Stock { Item = book1, OnHand = 2, OnOrder = 9 };
+                //Needs check for duplicate store
                 store2.Inventory.Add(store2book1);
 
                 db.SaveChanges();
@@ -95,5 +109,5 @@ namespace CI203_semester_2
         public DbSet<Store> Stores { get; set; }
         public DbSet<Stock> Stocks { get; set; }
     }
-
 }
+
